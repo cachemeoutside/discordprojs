@@ -1,5 +1,5 @@
 ---
-name: Run trending script
+name: runtrending
 
 on:
   push:
@@ -12,9 +12,10 @@ on:
         default: test
         required: true
 jobs:
-  Build:
-    name: Build and Push
+  execscript:
+    name: Exec Trending Script
     runs-on: ubuntu-20.04
+    container: golang:1.16.7-alpine
 
     steps:
       - name: Checkout Code
@@ -22,7 +23,7 @@ jobs:
         with:
           fetch-depth: 0
 
-      - name: Get list of files changed from PR
+      - name: Run go code
         run: |
           go run .
         working-directory: trending
