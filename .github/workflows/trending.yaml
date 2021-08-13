@@ -2,15 +2,15 @@
 name: Run trending script
 
 on:
-  - schedule:
+  schedule:
     - cron: "0 18 * * *"
-  - workflow_dispatch:
+  workflow_dispatch:
     inputs:
       tags:
         description: test
         default: test
         required: true
-  - push
+  push
 jobs:
   Build:
     name: Build and Push
