@@ -1,1 +1,1 @@
-# trendingbot
+# Discord Scripts
