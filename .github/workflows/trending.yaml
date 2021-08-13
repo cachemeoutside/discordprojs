@@ -2,18 +2,19 @@
 name: Run trending script
 
 on:
-  schedule:
+  - schedule:
     - cron: "0 18 * * *"
-  workflow_dispatch:
+  - workflow_dispatch:
     inputs:
       tags:
         description: test
         default: test
         required: true
+  - push
 jobs:
   Build:
     name: Build and Push
-    runs-on: golang:1.16.7-alpine
+    runs-on: ubuntu-20.04
 
     steps:
       - name: Checkout Code
