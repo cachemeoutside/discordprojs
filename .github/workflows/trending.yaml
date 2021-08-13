@@ -4,6 +4,12 @@ name: Run trending script
 on:
   schedule:
     - cron: "0 18 * * *"
+  workflow_dispatch:
+    inputs:
+      tags:
+        description: test
+        default: test
+        required: true
 jobs:
   Build:
     name: Build and Push
