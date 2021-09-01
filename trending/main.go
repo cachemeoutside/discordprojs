@@ -9,9 +9,24 @@ import (
 	"strings"
 )
 
+type Message struct {
+	Project string
+	About   string
+}
+
 func main() {
-	for _, url := range getTrending() {
-		fmt.Printf("%s | %s\n", url, getAbout(url))
+	c := make(chan Message)
+
+	urls := getTrending()
+
+	for _, url := range urls {
+		go getOutput(url, c)
+	}
+
+	result := make([]Message, len(urls))
+	for i, _ := range result {
+		result[i] = <-c
+		fmt.Printf("%s | %s\n", result[i].Project, result[i].About)
 	}
 }
 
@@ -42,9 +57,10 @@ func getTrending() []string {
 	return results
 }
 
-func getAbout(url string) string {
+func getOutput(url string, c chan Message) {
 	resp, _ := http.Get(url)
 	tokenizer := html.NewTokenizer(resp.Body)
+	msg := Message{url, "Description not available"}
 	for {
 		tt := tokenizer.Next()
 		t := tokenizer.Token()
@@ -61,11 +77,11 @@ func getAbout(url string) string {
 				if a.Key == "class" && a.Val == "f4 mt-3" {
 					tokenType := tokenizer.Next()
 					if tokenType == html.TextToken {
-						return strings.TrimSpace(tokenizer.Token().Data)
+						msg.About = strings.TrimSpace(tokenizer.Token().Data)
 					}
 				}
 			}
 		}
 	}
-	return "Description not available"
+	c <- msg
 }
