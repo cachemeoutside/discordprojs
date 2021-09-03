@@ -24,10 +24,12 @@ func main() {
 	}
 
 	result := make([]Message, len(urls))
+  blob := make([]string, len(urls))
 	for i, _ := range result {
 		result[i] = <-c
-		fmt.Printf("%s | %s\n", result[i].Project, result[i].About)
+    blob[i] = fmt.Sprintf("%s | %s", result[i].Project, result[i].About)
 	}
+  fmt.Println(strings.Join(blob[:], "\n"))
 }
 
 func getTrending() []string {
@@ -77,7 +79,10 @@ func getOutput(url string, c chan Message) {
 				if a.Key == "class" && a.Val == "f4 mt-3" {
 					tokenType := tokenizer.Next()
 					if tokenType == html.TextToken {
-						msg.About = strings.TrimSpace(tokenizer.Token().Data)
+            v := strings.TrimSpace(tokenizer.Token().Data)
+            if v != "" {
+  						msg.About = v
+            }
 					}
 				}
 			}
