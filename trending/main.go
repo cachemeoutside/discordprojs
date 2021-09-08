@@ -7,11 +7,46 @@ import (
 	"log"
 	"net/http"
 	"strings"
+  "encoding/json"
 )
 
 type Message struct {
 	Project string
 	About   string
+}
+
+type Payload struct {
+  Username string `json:"username"`
+  Avatar_url string `json:"avatar_url"`
+  Content string `json:"content"`
+  Embeds [1]Embed `json:"embeds"`
+}
+
+type Embed struct {
+  Author Author `json:"author"`
+  Url string `json:"url"`
+  Title string `json:"title"`
+  Description string `json:"description"`
+  Color int `json:"color"`
+  Fields []Field `json:"fields"`
+  Footer Footer `json:"footer"`
+}
+
+type Footer struct {
+  Text string `json:"text"`
+  Icon_url string `json:"icon_url"`
+}
+
+type Author struct {
+  Name string `json:"name"`
+  Url string `json:"url"`
+  Icon_url string `json:"icon_url"`
+}
+
+type Field struct {
+  Name string `json:"name"`
+  Value string `json:"value"`
+  Inline string `json:"inline"`
 }
 
 func main() {
@@ -24,12 +59,46 @@ func main() {
 	}
 
 	result := make([]Message, len(urls))
-  blob := make([]string, len(urls))
+  f := make([]Field, len(urls))
 	for i, _ := range result {
 		result[i] = <-c
-    blob[i] = fmt.Sprintf("%s | %s", result[i].Project, result[i].About)
-	}
-  fmt.Println(strings.Join(blob[:], "\n"))
+    f[i] = Field{
+      Name: result[i].Project,
+      Value: result[i].About,
+      Inline: "false",
+    }
+  }
+
+  emb := Embed{
+    Author: Author{
+      Name: "Trending Bot",
+      Url: "https://google.com",
+      Icon_url: "https://i.imgur.com/R66g1Pe.jp",
+    },
+    Url: "https://github.com",
+    Title: "Trending Topics",
+    Description: "Automated messages",
+    Color: 15258703,
+    Fields: f,
+    Footer: Footer{
+      Text: "Brought to you by cachemeoutside",
+      Icon_url: "https://i.imgur.com/R66g1Pe.jpg",
+    },
+  }
+
+  payload := Payload{
+    Username: "Trending Bot",
+    Avatar_url: "https://i.imgur.com/R66g1Pe.jpg",
+    Content: "Content",
+    Embeds: [1]Embed{emb},
+  }
+
+  b, err := json.Marshal(payload)
+  if err != nil {
+    fmt.Println(err)
+    return
+  }
+  fmt.Println(string(b))
 }
 
 func getTrending() []string {
