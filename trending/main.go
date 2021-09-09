@@ -8,6 +8,8 @@ import (
 	"net/http"
 	"strings"
   "encoding/json"
+  "bytes"
+  "os"
 )
 
 type Message struct {
@@ -98,7 +100,15 @@ func main() {
     fmt.Println(err)
     return
   }
-  fmt.Println(string(b))
+
+  resp, err := http.Post(os.Getenv("DISCORD_TRENDING_WEBHOOK"), "application/json", bytes.NewBuffer(b))
+
+  if err != nil {
+    fmt.Println(err)
+    return
+  }
+
+  fmt.Println(resp)
 }
 
 func getTrending() []string {
