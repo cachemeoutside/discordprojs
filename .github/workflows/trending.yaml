@@ -27,3 +27,5 @@ jobs:
         run: |
           go run .
         working-directory: trending
+        env:
+          DISCORD_TRENDING_WEBHOOK: ${{ secrets.DISCORD_TRENDING_WEBHOOK }}
